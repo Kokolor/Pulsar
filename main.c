@@ -105,6 +105,36 @@ PSF1_FONT *load_font(const char *path)
   return font;
 }
 
+void fill_memory_map(bootinfo_t *bootinfo)
+{
+  efi_status_t status;
+  efi_memory_descriptor_t *efi_mem_map = NULL;
+  uintn_t mem_map_size = 0, map_key = 0, desc_size = 0;
+
+  status = BS->GetMemoryMap(&mem_map_size, NULL, &map_key, &desc_size, NULL);
+  if (status != EFI_BUFFER_TOO_SMALL || !mem_map_size)
+  {
+    return;
+  }
+
+  mem_map_size += 4 * desc_size;
+  efi_mem_map = (efi_memory_descriptor_t *)malloc(mem_map_size);
+  if (!efi_mem_map)
+  {
+    return;
+  }
+
+  status = BS->GetMemoryMap(&mem_map_size, efi_mem_map, &map_key, &desc_size, NULL);
+  if (EFI_ERROR(status))
+  {
+    return;
+  }
+
+  bootinfo->mem_map = (EFI_MEMORY_DESCRIPTOR *)efi_mem_map;
+  bootinfo->mem_map_size = mem_map_size;
+  bootinfo->mem_map_desc_size = desc_size;
+}
+
 void load_elf(char *filename)
 {
   FILE *f;
@@ -128,7 +158,8 @@ void load_elf(char *filename)
     if (!buff)
     {
       fprintf(stderr, "unable to allocate memory\n");
-      return 1;
+      while (1)
+        ;
     }
     fread(buff, size, 1, f);
     fclose(f);
@@ -136,7 +167,8 @@ void load_elf(char *filename)
   else
   {
     fprintf(stderr, "Unable to open file\n");
-    return 0;
+    while (1)
+      ;
   }
 
   memset(&bootinfo, 0, sizeof(bootinfo_t));
@@ -149,8 +181,11 @@ void load_elf(char *filename)
     if (EFI_ERROR(status))
     {
       fprintf(stderr, "unable to set video mode\n");
-      return 0;
+      while (1)
+        ;
     }
+
+    fill_memory_map(&bootinfo);
 
     bootinfo.framebuffer = (unsigned int *)gop->Mode->FrameBufferBase;
     bootinfo.width = gop->Mode->Information->HorizontalResolution;
@@ -170,7 +205,8 @@ void load_elf(char *filename)
   else
   {
     fprintf(stderr, "unable to get graphics output protocol\n");
-    return 0;
+    while (1)
+      ;
   }
 
   elf = (Elf64_Ehdr *)buff;
@@ -196,7 +232,8 @@ void load_elf(char *filename)
   else
   {
     fprintf(stderr, "not a valid ELF executable for this architecture\n");
-    return 0;
+    while (1)
+      ;
   }
   free(buff);
 
@@ -205,7 +242,8 @@ void load_elf(char *filename)
     fprintf(stderr,
             "Ph'nglui mglw'nafh Chtulu R'lyeh wgah'nagl fhtagn\n"
             "(Hastur has a hold on us and won't let us go)\n");
-    return 0;
+    while (1)
+      ;
   }
 
   (*((void (*__attribute__((sysv_abi)))(bootinfo_t *))(entry)))(&bootinfo);
