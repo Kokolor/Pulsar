@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Pulsar is an EFI bootloader designed to work with the Taha kernel. This project aims to provide a flexible and efficient way to boot your custom kernel.
+Pulsar is an EFI bootloader designed to work with the Orion kernel. This project aims to provide a flexible and efficient way to boot your custom kernel.
 
 ## Dependencies
 
