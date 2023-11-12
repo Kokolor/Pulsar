@@ -13,7 +13,7 @@ disk:
 	rm -rf mnt/
 
 run: disk
-	qemu-system-x86_64 -cpu qemu64,pdpe1gb -bios /usr/share/edk2/x64/OVMF.fd -drive file=Pulsar.img,format=raw -m 4096M
+	qemu-system-x86_64 -cpu qemu64,pdpe1gb -bios /usr/share/ovmf/OVMF.fd -drive file=Pulsar.img,format=raw -m 4096M
 
 _clean:
 	rm -f $(TARGET)

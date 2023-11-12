@@ -157,7 +157,7 @@ void load_elf(char *filename)
     buff = malloc(size + 1);
     if (!buff)
     {
-      fprintf(stderr, "unable to allocate memory\n");
+      fprintf(stderr, "Unable to allocate memory\n");
       while (1)
         ;
     }
@@ -180,7 +180,7 @@ void load_elf(char *filename)
     ST->StdErr->Reset(ST->StdErr, 0);
     if (EFI_ERROR(status))
     {
-      fprintf(stderr, "unable to set video mode\n");
+      fprintf(stderr, "Unable to set video mode\n");
       while (1)
         ;
     }
@@ -280,6 +280,24 @@ int main(int argc, char **argv)
   efi_status_t status;
 
   ST->ConOut->ClearScreen(ST->ConOut);
+
+  uint8_t debug_level = 0;
+  printf("Choose debug level:\n0: Debug Off\n1: Debug On\n");
+
+  while (1)
+  {
+    status = ST->ConIn->ReadKeyStroke(ST->ConIn, &key);
+    if (key.UnicodeChar == '0')
+    {
+      debug_level = 0;
+      break;
+    }
+    else if (key.UnicodeChar == '1')
+    {
+      debug_level = 1;
+      break;
+    }
+  }
 
   if ((dir = opendir("\\EFI\\BOOT")) != NULL)
   {

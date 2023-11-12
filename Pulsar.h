@@ -1,3 +1,5 @@
+uint8_t debug_level = 0;
+
 typedef struct
 {
         unsigned char magic[2];
