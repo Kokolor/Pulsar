@@ -211,8 +211,6 @@ void load_elf(char *filename)
       ;
   }
 
-  bootinfo.debug_level = debug_on;
-
   elf = (Elf64_Ehdr *)buff;
   if (!memcmp(elf->e_ident, ELFMAG, SELFMAG) && /* magic match? */
       elf->e_ident[EI_CLASS] == ELFCLASS64 &&   /* 64 bit? */
@@ -284,23 +282,6 @@ int main(int argc, char **argv)
   efi_status_t status;
 
   ST->ConOut->ClearScreen(ST->ConOut);
-
-  printf("Choose debug level:\n0: Debug Off\n1: Debug On\n");
-
-  while (1)
-  {
-    status = ST->ConIn->ReadKeyStroke(ST->ConIn, &key);
-    if (key.UnicodeChar == '0')
-    {
-      debug_on = 0;
-      break;
-    }
-    else if (key.UnicodeChar == '1')
-    {
-      debug_on = 1;
-      break;
-    }
-  }
 
   if ((dir = opendir("\\EFI\\BOOT")) != NULL)
   {
