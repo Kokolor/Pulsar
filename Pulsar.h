@@ -1,5 +1,3 @@
-uint8_t debug_level = 0;
-
 typedef struct
 {
         unsigned char magic[2];
@@ -32,6 +30,7 @@ typedef struct
         EFI_MEMORY_DESCRIPTOR *mem_map;
         uint64_t mem_map_size;
         uint64_t mem_map_desc_size;
+        uint8_t debug_level;
         int argc;
         char **argv;
         PSF1_FONT *font;
